@@ -12,6 +12,7 @@ function DBConnection({ onConnect, onExampleClick }) {
     const [connected, setConnected] = useState(false);
     const [examples, setExamples] = useState([]);
     const hasAutoConnected = useRef(false);
+    const API_BASE = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
     // Load saved config on mount
     useEffect(() => {
@@ -27,7 +28,7 @@ function DBConnection({ onConnect, onExampleClick }) {
             setDatabase(saved.database);
 
             // Try reconnect automatically
-            axios.post("http://localhost:5000/connect", saved)
+            axios.post(`${API_BASE}/connect`, saved)
                 .then(res => {
                     if (res.data.success) {
                         setConnected(true);
@@ -45,7 +46,7 @@ function DBConnection({ onConnect, onExampleClick }) {
 
     const fetchExamples = async () => {
         try {
-            const tblRes = await axios.get("http://localhost:5000/tables");
+            const tblRes = await axios.get(`${API_BASE}/tables`);
             if (tblRes.data.success) {
                 const tables = tblRes.data.tables;
                 const allQuestions = tables.flatMap((t) => [
@@ -68,7 +69,7 @@ function DBConnection({ onConnect, onExampleClick }) {
     const connectDB = async () => {
         try {
             const config = { host, port, user, password, database };
-            const res = await axios.post("http://localhost:5000/connect", config);
+            const res = await axios.post(`${API_BASE}/connect`, config);
 
             if (res.data.success) {
                 setConnected(true);

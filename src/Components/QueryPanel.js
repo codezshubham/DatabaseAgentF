@@ -7,11 +7,12 @@ function QueryPanel({ question, setQuestion }) {
   const [sql, setSql] = useState("");
   const [results, setResults] = useState([]);
   const [tableName, setTableName] = useState("");
+  const API_BASE = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
   // Generate SQL
   const generateSQL = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/generate-sql", { question });
+      const res = await axios.post(`${API_BASE}/generate-sql`, { question });
       if (res.data.success) {
         setSql(res.data.sql || "");
         setResults([]);
@@ -28,7 +29,7 @@ function QueryPanel({ question, setQuestion }) {
   const executeSQL = async () => {
     if (!sql) return toast.warn("⚠️ No SQL query to execute!");
     try {
-      const res = await axios.post("http://localhost:5000/execute", { sql });
+      const res = await axios.post(`${API_BASE}/execute`, { sql });
       if (res.data.success) {
         setResults(res.data.results || []);
         setTableName(res.data.table || "");
